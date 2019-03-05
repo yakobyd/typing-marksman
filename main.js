@@ -14,37 +14,116 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-let font;
-let fontsize = 40;
+let words;   // The array of words to shoot
+let buffer;  // Stores user keyboard input
+let score;   // The score count
 
-let words;
+let gameOver = false;
+let numOfWords = 15;
+
+// Font variables
+let font;
+let fontsize;
+
+/* Reset the game */
+function init() {
+  gameOver = false;
+  score = 0;
+
+  // Set text characteristics
+  textFont(font);
+  fontsize = 40;
+
+  words = generateWords(numOfWords);  // define words
+  buffer = [];  // empty the input buffer
+}
 
 function preload() {
   // Preload our font
   font = loadFont('Assets/Fonts/Comfortaa-Regular.ttf');
 }
 
+/* Initialize our game settings */
 function setup() {
   // Create a black canvas
-  let canvas = createCanvas(800, 600);
+  let canvas = createCanvas(1280, 720);
   canvas.parent('canvas');
   background(0);
 
-  // Set text characteristics
-  textFont(font);
-  textSize(fontsize);
-  textAlign(LEFT, TOP);
-
-  // Define words
-  words = generateWords(10);
+  // Initialize a game
+  init();
 }
 
+/* The game loop */
 function draw() {
   background(0);  // reset background to black
 
   // Draw the words
-  for(let i = 0; i < words.length; i++){
+  for (let i = 0; i < words.length; i++) {
     words[i].update();
     words[i].show();
+
+    // Remove words that have left the screen
+    if (words[i].hasLeftScreen()) {
+      words.splice(i, 1);
+      i--;
+      gameOver = true;  // temporal
+    }
   }
+
+  // Draw our buffer
+  drawBuffer();
+
+  // Draw score count
+  drawScore();
+
+  // Shoot the words
+  let i = getIndexTooShoot();
+  if (i >= 0) {
+    score += 10 * words[i].word.length;
+    words.splice(i, 1);
+    buffer = [];
+  }
+
+  // Check if the player has lost
+  if (gameOver) {
+    dimScene();
+    drawScore();
+    drawGameOverMsg();
+    drawPlayAgainMsg();
+    noLoop();
+  }
+
+  // Check if the player has won
+  if (words.length === 0  && !gameOver) {
+    gameOver = true;
+    background(0);
+    drawScore();
+    drawVictoryMsg();
+    drawPlayAgainMsg();
+    noLoop();
+  }
+}
+
+/* Handle User Input */
+function keyPressed() {
+  // Add typed letters to the buffer
+  if ((65 <= keyCode && keyCode <= 90) || keyCode === 32)
+    buffer.push(key);
+
+  // Delete the last key when backspace is pressed
+  else if (keyCode === BACKSPACE)
+    buffer.pop();
+
+  // Reset buffer when CTRL is pressed
+  else if (keyCode === CONTROL)
+    buffer = [];
+
+  // Restart the game
+  else if (keyCode === ENTER && gameOver){
+    init();
+    loop();
+  }
+
+  console.log(bufferToStr());  // DEBUG
 }

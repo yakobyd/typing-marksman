@@ -32,9 +32,22 @@ class Word extends Point{
   }
 
   show(){
+    // Handle text size here to get correct text width
+    textSize(fontsize);
+
+    // Draw the surrounding rectangle
     fill(100);
     rect(this.pos.x, this.pos.y, textWidth(this.word), fontsize, 5);
+
+    // Draw the text
     fill(255);
+    textAlign(LEFT, TOP);
     text(this.word, this.pos.x, this.pos.y);
+  }
+
+  hasLeftScreen(){
+    let inX = (this.pos.x > 0) && (this.pos.x + textWidth(this.word) < width);
+    let inY = (this.pos.y < height - fontsize);
+    return !(inX && inY);
   }
 }
