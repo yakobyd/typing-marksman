@@ -25,6 +25,9 @@ let numOfWords = 15;
 let font;
 let fontsize;
 
+// Track current word list
+let word_list;
+
 /* Reset the game */
 function init() {
   gameOver = false;
@@ -34,6 +37,9 @@ function init() {
   textFont(font);
   fontsize = 40;
 
+  // Handle text size here to get correct values of text width
+  textSize(fontsize);
+
   words = generateWords(numOfWords);  // define words
   buffer = [];  // empty the input buffer
 }
@@ -41,6 +47,9 @@ function init() {
 function preload() {
   // Preload our font
   font = loadFont('Assets/Fonts/Comfortaa-Regular.ttf');
+
+  // Preload our word list
+  word_list = loadStrings("../Assets/WordLists/mathematics.txt");
 }
 
 /* Initialize our game settings */

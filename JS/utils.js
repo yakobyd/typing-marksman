@@ -14,24 +14,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* Generate n words */
 function generateWords(n) {
   let words = [];
   let x, y, v;
-  let word, word_list, w;
+  let word, w;
+
+  filterWordList();
 
   for (let i = 0; i < n; i++) {
-    x = random(0.1 * width, 0.8 * width);
-    y = random(0.1 * height, 0.2 * height);
+    x = random(0.05 * width, 0.8 * width);
+    y = random(0.05 * height, 0.2 * height);
     v = random(0.1, 1);
 
-    word_list = ['even', 'find', 'from', 'first', 'give', 'have', 'could'];
-    word = random(word_list);
+    word = random(word_list);  // choose a random word form the list
 
     w = new Word(x, y, v, word);
     words.push(w);
   }
 
   return words;
+}
+
+/* Filter the global word_list.
+ * That is, remove comments and empty lines.
+ */
+function filterWordList() {
+  // Filter with this function
+  function filter_function(line) {
+    if (!line || [' ', '*', '/'].includes(line[0]))
+      return false;
+
+    return true;
+  }
+
+  word_list = word_list.filter(filter_function);
+
+  return word_list;
 }
 
 /* Get the string that our global buffer represents */
